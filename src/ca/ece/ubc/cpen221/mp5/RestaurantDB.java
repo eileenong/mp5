@@ -41,15 +41,13 @@ public class RestaurantDB {
 	 * @param usersJSONfilename
 	 *            the filename for the users
 	 */
-	public RestaurantDB(String restaurantJSONfilename, String reviewsJSONfilename, String usersJSONfilename) {
+	public RestaurantDB(String restaurantsJSONfilename, String reviewsJSONfilename, String usersJSONfilename) {
 		// TODO: Implement this method
         JSONParser parser = new JSONParser();
-        FileReader restaurantReader = new FileReader(restaurantJSONfilename);
+        FileReader restaurantReader = new FileReader(restaurantsJSONfilename);
         try {
-            
-            Object obj = parser.parse(restaurantReader);
-            JSONObject jsonObj = (JSONObject) obj;
-            
+            Object restaurantObj = parser.parse(restaurantReader);
+            JSONObject jsonObj = (JSONObject) restaurantObj;
             for( int i = 0; i < jsonObj.size(); i++) {
                 boolean open = (boolean) jsonObj.get("open");
                 String url = (String) jsonObj.get("url");
@@ -84,8 +82,39 @@ public class RestaurantDB {
             // TODO Auto-generated catch block
             e1.printStackTrace();
         }
+        
+        FileReader userReader = new FileReader(usersJSONfilename);
+        Object userObj = parser.parse(userReader);
+        JSONObject userJsonObj = (JSONObject) userObj;
+        for( int i = 0; i < userJsonObj.size(); i++) {
+            String url = (String) userJsonObj.get("url");
+            int funny = (int) userJsonObj.get("funny");
+            int useful = (int) userJsonObj.get("useful");
+            int cool = (int) userJsonObj.get("cool");
+            int review_count = (int) userJsonObj.get("review_count");
+            String type = (String) userJsonObj.get("type");
+            String user_id = (String) userJsonObj.get("user_id");
+            String name = (String) userJsonObj.get("name");
+            double average_stars = (double) userJsonObj.get("average_stars");
+            
+            UserList.add(new User(url, funny, useful, cool, review_count, type, user_id, name, average_stars));
+        }
+        
+        FileReader reviewReader = new FileReader(reviewsJSONfilename);
+	    Object reviewObj = parser.parse(reviewReader);
+	    JSONObject reviewJsonObj = (JSONObject) reviewObj;
+	    for( int i = 0; i < reviewJsonObj.size(); i++) {
+	        String type = (String) reviewJsonObj.get("type");
+	        String review_id = (String) reviewJsonObj.get("review_id");
+	        String text = (String) reviewJsonObj.get("text");
+	        int stars = (int) reviewJsonObj.get("stars");
+	        String user_id = (String) reviewJsonObj.get("user_id");
+	        String date = (String) reviewJsonObj.get("date");
+	        
+	        ReviewList.add(new Review(type, review_id, text, stars, user_id, date));
+	    }
 	    
-	    
+        
 	}
 
 	public Set<Restaurant> query(String queryString) {
